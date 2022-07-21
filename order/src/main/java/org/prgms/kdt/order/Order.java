@@ -7,24 +7,20 @@ public class Order {
     private final UUID orderId;
     private final UUID customerId;
     private final List<OrderItem> orderItems;
-    private long discountAmount;
+    private Voucher voucher;
     private OrderStatus orderStatus = OrderStatus.ACCEPTED;
 
-    public Order(UUID orderId, UUID customerId, List<OrderItem> orderItems, long discountAmount, OrderStatus orderStatus) {
+    public Order(UUID orderId, UUID customerId, List<OrderItem> orderItems, Voucher voucher) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.orderItems = orderItems;
-        this.discountAmount = discountAmount;
+        this.voucher = voucher;
     }
 
     public long totalAmount() {
         var beforeDiscount = orderItems.stream().map(v -> v.getProductPrice() * v.getQuantity())
                 .reduce(0L, Long::sum);
-        return beforeDiscount - discountAmount;
-    }
-
-    public void setDiscountAmount(long discountAmount) {
-        this.discountAmount = discountAmount;
+        return voucher.discount(beforeDiscount);
     }
 
     public void setOrderStatus(OrderStatus orderStatus) {
