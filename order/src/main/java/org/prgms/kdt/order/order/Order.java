@@ -1,4 +1,6 @@
-package org.prgms.kdt.order;
+package org.prgms.kdt.order.order;
+
+import org.prgms.kdt.order.voucher.Voucher;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +34,11 @@ public class Order {
         return voucher.map(value -> value.discount(beforeDiscount)).orElse(beforeDiscount);
     }
 
+    public UUID getOrderId() { return this.orderId; }
+
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
+
+
 }

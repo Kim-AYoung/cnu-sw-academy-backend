@@ -1,4 +1,4 @@
-package org.prgms.kdt.order;
+package org.prgms.kdt.order.voucher;
 
 import java.util.UUID;
 
