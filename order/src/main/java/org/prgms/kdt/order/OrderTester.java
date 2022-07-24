@@ -1,5 +1,6 @@
 package org.prgms.kdt.order;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.util.Assert;
 
 import java.text.MessageFormat;
@@ -9,8 +10,8 @@ import java.util.UUID;
 public class OrderTester {
     public static void main(String[] args) {
 
-        OrderContext orderContext = new OrderContext();
-        OrderService orderService = orderContext.orderService();
+        var applicationContext = new AnnotationConfigApplicationContext(AppConfiguration.class);
+        var orderService = applicationContext.getBean(OrderService.class);
 
         var customerId = UUID.randomUUID();
         var orderItems = new ArrayList<OrderItem>() {{
