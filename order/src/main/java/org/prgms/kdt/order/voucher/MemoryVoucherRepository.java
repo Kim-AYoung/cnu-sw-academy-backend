@@ -3,6 +3,7 @@ package org.prgms.kdt.order.voucher;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -13,7 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@Qualifier("memory")
+@Profile({"local", "default"})
 public class MemoryVoucherRepository implements VoucherRepository/*, InitializingBean, DisposableBean*/ {
 
     private final Map<UUID, Voucher> storage = new ConcurrentHashMap<>();
