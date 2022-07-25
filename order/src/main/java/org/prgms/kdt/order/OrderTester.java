@@ -1,6 +1,7 @@
 package org.prgms.kdt.order;
 
 import org.prgms.kdt.order.order.OrderItem;
+import org.prgms.kdt.order.order.OrderProperties;
 import org.prgms.kdt.order.order.OrderService;
 import org.prgms.kdt.order.voucher.FixedAmountVoucher;
 import org.prgms.kdt.order.voucher.VoucherRepository;
@@ -31,13 +32,17 @@ public class OrderTester {
 
         Assert.isTrue(order.totalAmount() == 90L, MessageFormat.format("totalAmount {0} is not 90L", order.totalAmount()));
 
-        var environment = applicationContext.getEnvironment();
-        var version = environment.getProperty("kdt.version");
-        var minimumOrderAmount = environment.getProperty("kdt.minimum-order-amount", Integer.class);
-        var supportVendors = environment.getProperty("kdt.support-vendors", List.class);
-        System.out.println(MessageFormat.format("version -> {0}", version));
-        System.out.println(MessageFormat.format("minimumOrderAmount -> {0}", minimumOrderAmount));
-        System.out.println(MessageFormat.format("supportVendors -> {0}", supportVendors));
+        // environment 불러오기
+//        var environment = applicationContext.getEnvironment();
+//        var version = environment.getProperty("kdt.version");
+//        var minimumOrderAmount = environment.getProperty("kdt.minimum-order-amount", Integer.class);
+//        var supportVendors = environment.getProperty("kdt.support-vendors", List.class);
+//        var description = environment.getProperty("kdt.description", List.class);
+        var orderProperties = applicationContext.getBean(OrderProperties.class);
+        System.out.println(MessageFormat.format("version -> {0}", orderProperties.getVersion()));
+        System.out.println(MessageFormat.format("minimumOrderAmount -> {0}", orderProperties.getMinimumOrderAmount()));
+        System.out.println(MessageFormat.format("supportVendors -> {0}", orderProperties.getSupportVendors()));
+        System.out.println(MessageFormat.format("description -> {0}", orderProperties.getDescription()));
 
         applicationContext.close();
     }
