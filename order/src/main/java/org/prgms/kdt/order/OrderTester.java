@@ -6,7 +6,6 @@ import org.prgms.kdt.order.voucher.FixedAmountVoucher;
 import org.prgms.kdt.order.voucher.VoucherRepository;
 import org.springframework.beans.factory.annotation.BeanFactoryAnnotationUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.Assert;
 
 import java.text.MessageFormat;
@@ -28,7 +27,7 @@ public class OrderTester {
         var voucherRepository = BeanFactoryAnnotationUtils.qualifiedBeanOfType(applicationContext.getBeanFactory(), VoucherRepository.class, "memory");
         var voucher = voucherRepository.insert(new FixedAmountVoucher(UUID.randomUUID(), 10L));
 
-        var order = orderService.createOrder(UUID.randomUUID(), orderItems, voucher.getVoucherId());
+        var order = orderService.createOrder(customerId, orderItems, voucher.getVoucherId());
 
         Assert.isTrue(order.totalAmount() == 90L, MessageFormat.format("totalAmount {0} is not 90L", order.totalAmount()));
 
