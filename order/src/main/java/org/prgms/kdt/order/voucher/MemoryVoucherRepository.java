@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 @Qualifier("memory")
-public class MemoryVoucherRepository implements VoucherRepository, InitializingBean, DisposableBean {
+public class MemoryVoucherRepository implements VoucherRepository/*, InitializingBean, DisposableBean*/ {
 
     private final Map<UUID, Voucher> storage = new ConcurrentHashMap<>();
 
@@ -29,21 +29,21 @@ public class MemoryVoucherRepository implements VoucherRepository, InitializingB
         return voucher;
     }
 
-    @PostConstruct
-    public void postConstruct() {
-        System.out.println("[MemoryVoucherRepository] postConstruct called");
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        System.out.println("[MemoryVoucherRepository] afterPropertiesSet called");
-    }
-
-    @PreDestroy
-    public void preDestory() { System.out.println("[MemoryVoucherRepository] preDestroy called"); }
-
-    @Override
-    public void destroy() throws Exception {
-        System.out.println("[MemoryVoucherRepository] destroy called");
-    }
+//    @PostConstruct
+//    public void postConstruct() {
+//        System.out.println("[MemoryVoucherRepository] postConstruct called");
+//    }
+//
+//    @Override
+//    public void afterPropertiesSet() throws Exception {
+//        System.out.println("[MemoryVoucherRepository] afterPropertiesSet called");
+//    }
+//
+//    @PreDestroy
+//    public void preDestory() { System.out.println("[MemoryVoucherRepository] preDestroy called"); }
+//
+//    @Override
+//    public void destroy() throws Exception {
+//        System.out.println("[MemoryVoucherRepository] destroy called");
+//    }
 }
