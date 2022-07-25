@@ -8,15 +8,24 @@ import org.prgms.kdt.order.voucher.JDBCVoucherRepository;
 import org.prgms.kdt.order.voucher.VoucherRepository;
 import org.springframework.beans.factory.annotation.BeanFactoryAnnotationUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.channels.Channel;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class OrderTester {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         var applicationContext = new AnnotationConfigApplicationContext();
         applicationContext.register(AppConfiguration.class);
@@ -31,8 +40,8 @@ public class OrderTester {
             add(new OrderItem(UUID.randomUUID(), 100L, 1));
         }};
         var voucherRepository = applicationContext.getBean(VoucherRepository.class);
-        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository instanceof JDBCVoucherRepository));
-        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository.getClass().getCanonicalName()));
+//        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository instanceof JDBCVoucherRepository));
+//        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository.getClass().getCanonicalName()));
         var voucher = voucherRepository.insert(new FixedAmountVoucher(UUID.randomUUID(), 10L));
 
         var order = orderService.createOrder(customerId, orderItems, voucher.getVoucherId());
@@ -50,6 +59,21 @@ public class OrderTester {
 //        System.out.println(MessageFormat.format("minimumOrderAmount -> {0}", orderProperties.getMinimumOrderAmount()));
 //        System.out.println(MessageFormat.format("supportVendors -> {0}", orderProperties.getSupportVendors()));
 //        System.out.println(MessageFormat.format("description -> {0}", orderProperties.getDescription()));
+
+        // resource 불러오기
+        var resource = applicationContext.getResource("classpath:application.yaml");
+        var resource2 = applicationContext.getResource("file:temp.txt");
+        System.out.println(MessageFormat.format("Resource -> {0}", resource.getClass().getCanonicalName()));
+        var file = resource.getFile();
+        var strings = Files.readAllLines(file.toPath());
+        System.out.println(strings.stream().collect(Collectors.joining("\n")));
+
+        var resource3 = applicationContext.getResource("https://jsonplaceholder.typicode.com/todos/1");
+        System.out.println(MessageFormat.format("Resource -> {0}", resource3.getClass().getCanonicalName()));
+        var readableByteChannel = Channels.newChannel(resource3.getURL().openStream());
+        var bufferedReader = new BufferedReader(Channels.newReader(readableByteChannel, StandardCharsets.UTF_8));
+        var contents = bufferedReader.lines().collect(Collectors.joining("\n"));
+        System.out.println(contents);
 
         applicationContext.close();
     }

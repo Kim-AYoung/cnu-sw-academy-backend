@@ -1,0 +1,4 @@
+This is temporary text file.
+A : Hi!
+B : Hello~
+A : How are you?
