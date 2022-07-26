@@ -5,12 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-import java.text.MessageFormat;
 import java.util.List;
 
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "kdt")
 public class OrderProperties implements InitializingBean {
 
@@ -61,10 +60,10 @@ public class OrderProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        logger.debug("[OrderProperties] version -> {}", version);
-        logger.debug("[OrderProperties] minimumOrderAmount -> {}", minimumOrderAmount);
-        logger.debug("[OrderProperties] supportVendors -> {}", supportVendors);
-        logger.debug("[OrderProperties] javaHome -> {}", javaHome);
-        logger.debug("[OrderProperties] description -> {}", description);
+        logger.info("version -> {}", version);
+        logger.info("minimumOrderAmount -> {}", minimumOrderAmount);
+        logger.info("supportVendors -> {}", supportVendors);
+        logger.info("javaHome -> {}", javaHome);
+        logger.info("description -> {}", description);
     }
 }

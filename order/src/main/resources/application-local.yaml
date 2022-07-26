@@ -1,10 +1,10 @@
 kdt:
-  version: "v1.0"
+  version: "v1.0-local"
   minimum-order-amount: 1
   support-vendors:
-    - a
-    - b
+    - local-a
+    - local-b
   description: |-
-    line 1 hello world
-    line 2 xxxx
-    line 3
+    local line 1 hello world
+    local line 2 xxxx
+    local line 3

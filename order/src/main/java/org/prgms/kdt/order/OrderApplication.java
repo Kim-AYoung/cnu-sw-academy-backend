@@ -19,27 +19,10 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"org.prgms.kdt.order.order", "org.prgms.kdt.order.voucher", "org.prgms.kdt.order.configuration"})
+@ComponentScan(basePackages = {"org.prgms.kdt.order.order", "org.prgms.kdt.order.voucher"})
 public class OrderApplication {
-
     public static void main(String[] args) {
-        var springApplication = new SpringApplication(OrderApplication.class);
-        // springApplication.setAdditionalProfiles("dev");
-        var applicationContext = springApplication.run(args);
+        SpringApplication.run(OrderApplication.class, args);
 
-        var orderService = applicationContext.getBean(OrderService.class);
-
-        var customerId = UUID.randomUUID();
-        var orderItems = new ArrayList<OrderItem>() {{
-            add(new OrderItem(UUID.randomUUID(), 100L, 1));
-        }};
-        var voucherRepository = applicationContext.getBean(VoucherRepository.class);
-//        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository instanceof JDBCVoucherRepository));
-//        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository.getClass().getCanonicalName()));
-        var voucher = voucherRepository.insert(new FixedAmountVoucher(UUID.randomUUID(), 10L));
-
-        var order = orderService.createOrder(customerId, orderItems, voucher.getVoucherId());
-
-        Assert.isTrue(order.totalAmount() == 90L, MessageFormat.format("totalAmount {0} is not 90L", order.totalAmount()));
     }
 }
