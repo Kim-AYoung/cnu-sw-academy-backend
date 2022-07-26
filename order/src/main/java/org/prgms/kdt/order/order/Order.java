@@ -3,6 +3,7 @@ package org.prgms.kdt.order.order;
 import org.prgms.kdt.order.voucher.Voucher;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,5 +41,11 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public Optional<Voucher> getVoucher() {
+        return voucher;
+    }
 
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
 }
