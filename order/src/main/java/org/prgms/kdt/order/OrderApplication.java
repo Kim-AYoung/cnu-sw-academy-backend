@@ -34,8 +34,8 @@ public class OrderApplication {
             add(new OrderItem(UUID.randomUUID(), 100L, 1));
         }};
         var voucherRepository = applicationContext.getBean(VoucherRepository.class);
-        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository instanceof JDBCVoucherRepository));
-        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository.getClass().getCanonicalName()));
+//        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository instanceof JDBCVoucherRepository));
+//        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository.getClass().getCanonicalName()));
         var voucher = voucherRepository.insert(new FixedAmountVoucher(UUID.randomUUID(), 10L));
 
         var order = orderService.createOrder(customerId, orderItems, voucher.getVoucherId());
