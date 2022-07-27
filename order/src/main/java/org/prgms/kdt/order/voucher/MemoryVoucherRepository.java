@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@Profile({"local", "default"})
+@Profile({"local", "test"})
 public class MemoryVoucherRepository implements VoucherRepository/*, InitializingBean, DisposableBean*/ {
 
     private final Map<UUID, Voucher> storage = new ConcurrentHashMap<>();
