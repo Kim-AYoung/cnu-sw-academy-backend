@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 /logs
+!/src/main/java/org/prgms/kdt/order/RealJdbcCustomerRepository.java
 
 ### STS ###
 .apt_generated
