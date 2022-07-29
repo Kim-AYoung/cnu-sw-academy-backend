@@ -100,11 +100,6 @@ public class JdbcCustomerRepository {
         return 0;
     }
 
-    static UUID toUUID(byte[] bytes) { // 4버전의 UUID로 형변환 하기 위해
-        var byteBuffer = ByteBuffer.wrap(bytes);
-        return new UUID(byteBuffer.getLong(), byteBuffer.getLong());
-    }
-
     public int updateCustomerName(UUID customerId, String name) {
         try (
                 var connection = DriverManager.getConnection("jdbc:mysql://localhost/order_mgmt", "root", "");
@@ -129,6 +124,11 @@ public class JdbcCustomerRepository {
             logger.error("Got error while closing connection", throwable);
         }
         return 0;
+    }
+
+    static UUID toUUID(byte[] bytes) { // 4버전의 UUID로 형변환 하기 위해
+        var byteBuffer = ByteBuffer.wrap(bytes);
+        return new UUID(byteBuffer.getLong(), byteBuffer.getLong());
     }
 
     public static void main(String[] args) {
