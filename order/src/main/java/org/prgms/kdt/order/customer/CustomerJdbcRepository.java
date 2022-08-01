@@ -37,7 +37,7 @@ public class CustomerJdbcRepository implements CustomerRepository {
 
     @Override
     public Customer insert(Customer customer) {
-        var update = jdbcTemplate.update("INSERT INTO customers(customer_id, name, email, created_at) VALUES (UUID_TO_BIN(?), ?, ?, ?)",
+        var update = jdbcTemplate.update("INSERT INTO customers(customer_id, name, email, created_at) VALUES (UNHEX(REPLACE(?, '-', '')), ?, ?, ?)",
                 customer.getCustomerId().toString().getBytes(),
                 customer.getName(),
                 customer.getEmail(),
@@ -48,7 +48,7 @@ public class CustomerJdbcRepository implements CustomerRepository {
 
     @Override
     public Customer update(Customer customer) {
-        var update = jdbcTemplate.update("UPDATE customers SET name = ?, last_login_at = ? WHERE customer_id = UUID_TO_BIN(?)",
+        var update = jdbcTemplate.update("UPDATE customers SET name = ?, last_login_at = ? WHERE customer_id = UNHEX(REPLACE(?, '-', ''))",
                 customer.getName(),
                 customer.getLastLoginAt() != null ? Timestamp.valueOf(customer.getLastLoginAt()) : null,
                 customer.getCustomerId().toString().getBytes());
@@ -69,7 +69,7 @@ public class CustomerJdbcRepository implements CustomerRepository {
     @Override
     public Optional<Customer> findById(UUID customerId) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject("select * from customers where customer_id = UUID_TO_BIN(?)", customerRowMapper, customerId.toString().getBytes()));
+            return Optional.ofNullable(jdbcTemplate.queryForObject("select * from customers where customer_id = UNHEX(REPLACE(?, '-', ''))", customerRowMapper, customerId.toString().getBytes()));
         }catch (EmptyResultDataAccessException e) {
             logger.error("Got empty result", e);
             return Optional.empty();
