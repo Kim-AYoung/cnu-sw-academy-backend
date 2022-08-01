@@ -1,5 +1,7 @@
 package org.prgms.kdt.order.customer;
 
+import com.wix.mysql.EmbeddedMysql;
+import com.wix.mysql.ScriptResolver;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.*;
 import org.junit.platform.commons.logging.Logger;
@@ -17,6 +19,10 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+import static com.wix.mysql.EmbeddedMysql.anEmbeddedMysql;
+import static com.wix.mysql.config.Charset.UTF8;
+import static com.wix.mysql.config.MysqldConfig.aMysqldConfig;
+import static com.wix.mysql.distribution.Version.v5_7_latest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig
@@ -33,9 +39,9 @@ class CustomerJdbcRepositoryTest {
         @Bean
         DataSource dataSource() {
             var dataSource = DataSourceBuilder.create()
-                    .url("jdbc:mysql://localhost/order_mgmt")
-                    .username("root")
-                    .password("")
+                    .url("jdbc:mysql://localhost:2215/test-order_mgmt")
+                    .username("test")
+                    .password("test1234!")
                     .type(HikariDataSource.class)
                     .build();
 //            dataSource.setMinimumIdle(100);
@@ -52,6 +58,8 @@ class CustomerJdbcRepositoryTest {
     @Autowired
     DataSource dataSource;
 
+    EmbeddedMysql embeddedMysql;
+
     @Autowired
     CustomerJdbcRepository customerJdbcRepository;
 
@@ -59,8 +67,23 @@ class CustomerJdbcRepositoryTest {
 
     @BeforeAll
     void setUp() {
-        customerJdbcRepository.deleteAll();
         newCustomer = new Customer(UUID.randomUUID(), "new-user", "new-user@gmail.com", LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+
+        var config = aMysqldConfig(v5_7_latest)
+                .withCharset(UTF8)
+                .withPort(2215)
+                .withUser("test", "test1234!")
+                .withTimeZone("Asia/Seoul")
+                .build();
+
+        embeddedMysql = anEmbeddedMysql(config)
+                .addSchema("test-order_mgmt", ScriptResolver.classPathScript("schema.sql"))
+                .start();
+    }
+
+    @AfterAll
+    void cleanUp() {
+        embeddedMysql.stop();
     }
 
     @Test
