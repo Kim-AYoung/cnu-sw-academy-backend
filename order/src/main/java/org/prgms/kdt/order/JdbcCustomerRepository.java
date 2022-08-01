@@ -1,9 +1,11 @@
 package org.prgms.kdt.order;
 
+import org.prgms.kdt.order.customer.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -121,9 +123,45 @@ public class JdbcCustomerRepository {
         ) {
             return statement.executeUpdate();
         } catch (SQLException throwable) {
-            logger.error("Got error while closing connection", throwable);
+            logger.error("Got error while connection", throwable);
         }
         return 0;
+    }
+
+    public void transactionTest(Customer customer) {
+        String updateNameSql = "UPDATE customers SET name = ? WHERE customer_id = UUID_TO_BIN(?)";
+        String updateEmailSql = "UPDATE customers SET email = ? WHERE customer_id = UUID_TO_BIN(?)";
+
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/order_mgmt", "root", "");
+            connection.setAutoCommit(false);
+            try (
+                    var updateNameStatement = connection.prepareStatement(updateNameSql);
+                    var updateEmailStatement = connection.prepareStatement(updateEmailSql);
+            ) {
+                updateNameStatement.setString(1, customer.getName());
+                updateNameStatement.setBytes(2, customer.getCustomerId().toString().getBytes());
+                updateNameStatement.executeUpdate();
+
+                updateEmailStatement.setString(1, customer.getEmail());
+                updateEmailStatement.setBytes(2, customer.getCustomerId().toString().getBytes());
+                updateEmailStatement.executeUpdate();
+                connection.setAutoCommit(true);
+            }
+        } catch (SQLException exception) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                    connection.close();
+                } catch (SQLException throwable) {
+                    logger.error("Got error while connection", throwable);
+                    throw new RuntimeException(exception);
+                }
+            }
+            logger.error("Got error while connection", exception);
+            throw new RuntimeException(exception);
+        }
     }
 
     static UUID toUUID(byte[] bytes) { // 4버전의 UUID로 형변환 하기 위해
@@ -134,21 +172,8 @@ public class JdbcCustomerRepository {
     public static void main(String[] args) {
         var customerRepository = new JdbcCustomerRepository();
 
-        var count = customerRepository.deleteAllCustomers();
-        logger.info("deleted count -> {}", count);
+        customerRepository.transactionTest(
+                new Customer(UUID.fromString("1e0a02a3-864d-4625-8157-cb1870363a4c"), "updated-user", "new-user2@gmail.com", LocalDateTime.now()));
 
-        var customerId = UUID.randomUUID();
-        var customerName = "new-user";
-        logger.info("created customerId -> {}, customerName -> {}", customerId, customerName);
-
-        customerRepository.insertCustomer(customerId, "new-user", "new-user@gmail.com");
-        customerRepository.findAllIds().forEach(v -> logger.info("Found customerId : {}", v));
-
-        customerRepository.findNames(customerName).forEach(v -> logger.info("Found customerName by name={} : {}", customerName, v));
-
-        customerRepository.findAllNames().forEach(v -> logger.info("(before update) Found customerName : {}", v));
-        var newCustomerName = "updated-user";
-        customerRepository.updateCustomerName(customerId, newCustomerName);
-        customerRepository.findAllNames().forEach(v -> logger.info("(after update) Found customerName : {}", v));
     }
 }
