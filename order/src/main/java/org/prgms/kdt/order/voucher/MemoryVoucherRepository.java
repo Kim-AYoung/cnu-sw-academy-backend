@@ -1,5 +1,6 @@
 package org.prgms.kdt.order.voucher;
 
+import org.prgms.kdt.order.aop.TrackTime;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +26,7 @@ public class MemoryVoucherRepository implements VoucherRepository/*, Initializin
     }
 
     @Override
+    @TrackTime
     public Voucher insert(Voucher voucher) {
         storage.put(voucher.getVoucherId(), voucher);
         return voucher;

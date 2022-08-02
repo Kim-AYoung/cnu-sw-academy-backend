@@ -13,11 +13,13 @@ public class LoggingAspect {
 
     private static final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
 
-    @Around("org.prgms.kdt.order.aop.CommonPointcut.servicePublicMethodPointcut()")
+    @Around("@annotation(org.prgms.kdt.order.aop.TrackTime)")
     public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
         log.info("Before method called. {}", joinPoint.getSignature().toString());
+        var startTime = System.nanoTime();
         var result = joinPoint.proceed();
-        log.info("After method called with result => {}", result);
+        var intervalTime = (System.nanoTime() - startTime);
+        log.info("After method called with result => {} and time taken {} nanoseconds", result, intervalTime);
         return result;
     }
 }
