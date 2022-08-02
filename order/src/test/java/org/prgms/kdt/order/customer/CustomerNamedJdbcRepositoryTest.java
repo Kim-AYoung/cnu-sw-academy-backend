@@ -13,7 +13,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
@@ -59,6 +61,10 @@ class CustomerNamedJdbcRepositoryTest {
         public NamedParameterJdbcTemplate namedParameterJdbcTemplate(JdbcTemplate jdbcTemplate) {
             return new NamedParameterJdbcTemplate(jdbcTemplate);
         }
+
+        @Bean public PlatformTransactionManager platformTransactionManager(DataSource dataSource) {
+            return new DataSourceTransactionManager(dataSource);
+        }
     }
 
     @Autowired
@@ -67,7 +73,7 @@ class CustomerNamedJdbcRepositoryTest {
     EmbeddedMysql embeddedMysql;
 
     @Autowired
-    CustomerNamedJdbcRepository customerNamedJdbcRepository;
+    CustomerNamedJdbcRepository customerJdbcRepository;
 
     Customer newCustomer;
 
@@ -102,9 +108,9 @@ class CustomerNamedJdbcRepositoryTest {
     @Order(2)
     @DisplayName("고객 추가")
     void testInsert() {
-        customerNamedJdbcRepository.insert(newCustomer);
+        customerJdbcRepository.insert(newCustomer);
 
-        var retrievedCustomer = customerNamedJdbcRepository.findById(newCustomer.getCustomerId());
+        var retrievedCustomer = customerJdbcRepository.findById(newCustomer.getCustomerId());
         assertThat(retrievedCustomer).isPresent();
         assertThat(retrievedCustomer.get()).usingRecursiveComparison().isEqualTo(newCustomer);
     }
@@ -113,17 +119,17 @@ class CustomerNamedJdbcRepositoryTest {
     @Order(3)
     @DisplayName("전체 고객 조회")
     void testFindAll() {
-        assertThat(customerNamedJdbcRepository.findAll()).isNotEmpty();
+        assertThat(customerJdbcRepository.findAll()).isNotEmpty();
     }
 
     @Test
     @Order(4)
     @DisplayName("이름으로 고객 조회")
     void testFindByName() {
-        var customer = customerNamedJdbcRepository.findByName(newCustomer.getName());
+        var customer = customerJdbcRepository.findByName(newCustomer.getName());
         assertThat(customer).isPresent();
 
-        var unknown = customerNamedJdbcRepository.findByName("unknown-user");
+        var unknown = customerJdbcRepository.findByName("unknown-user");
         assertThat(unknown).isNotPresent();
     }
 
@@ -131,10 +137,10 @@ class CustomerNamedJdbcRepositoryTest {
     @Order(5)
     @DisplayName("이메일로 고객 조회")
     void testFindByEmail() {
-        var customer = customerNamedJdbcRepository.findByEmail(newCustomer.getEmail());
+        var customer = customerJdbcRepository.findByEmail(newCustomer.getEmail());
         assertThat(customer).isPresent();
 
-        var unknown = customerNamedJdbcRepository.findByEmail("unknown-user@gmail.com");
+        var unknown = customerJdbcRepository.findByEmail("unknown-user@gmail.com");
         assertThat(unknown).isNotPresent();
     }
 
@@ -143,14 +149,35 @@ class CustomerNamedJdbcRepositoryTest {
     @DisplayName("고객 수정")
     void testUpdate() {
         newCustomer.changeName("updated-user");
-        customerNamedJdbcRepository.update(newCustomer);
+        customerJdbcRepository.update(newCustomer);
 
-        var allCustomers = customerNamedJdbcRepository.findAll();
+        var allCustomers = customerJdbcRepository.findAll();
         assertThat(allCustomers).hasSize(1);
         assertThat(allCustomers.stream().findFirst().get()).usingRecursiveComparison().isEqualTo(newCustomer);
 
-        var retrievedCustomer = customerNamedJdbcRepository.findById(newCustomer.getCustomerId());
+        var retrievedCustomer = customerJdbcRepository.findById(newCustomer.getCustomerId());
         assertThat(retrievedCustomer).isPresent();
         assertThat(retrievedCustomer.get()).usingRecursiveComparison().isEqualTo(newCustomer);
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("트렌젝션 테스트")
+    void testTransaction() {
+        var prevOne = customerJdbcRepository.findById(newCustomer.getCustomerId());
+        assertThat(prevOne).isPresent();
+
+        var newOne = new Customer(UUID.randomUUID(), "a", "a@gmail.com", LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+        var insertedNewOne = customerJdbcRepository.insert(newOne);
+
+        customerJdbcRepository.testTransaction(
+                new Customer(insertedNewOne.getCustomerId(),
+                        "b",
+                        prevOne.get().getEmail(),
+                        newOne.getCreatedAt()));
+
+        var maybeNewOne = customerJdbcRepository.findById(insertedNewOne.getCustomerId());
+        assertThat(maybeNewOne).isPresent();
+        assertThat(maybeNewOne.get()).usingRecursiveComparison().isEqualTo(newOne);
     }
 }
