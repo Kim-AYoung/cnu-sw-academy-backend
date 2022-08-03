@@ -7,9 +7,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
@@ -22,11 +19,8 @@ public class CustomerNamedJdbcRepository implements CustomerRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    private final TransactionTemplate transactionTemplate;
-
-    public CustomerNamedJdbcRepository(NamedParameterJdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
+    public CustomerNamedJdbcRepository(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.transactionTemplate = transactionTemplate;
     }
 
     private static final RowMapper<Customer> customerRowMapper = (rs, rowNum) -> {
@@ -110,15 +104,15 @@ public class CustomerNamedJdbcRepository implements CustomerRepository {
         jdbcTemplate.update("DELETE FROM customers", Collections.emptyMap());
     }
 
-    public void testTransaction(Customer customer) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                jdbcTemplate.update("UPDATE customers SET name = :name WHERE customer_id = UNHEX(REPLACE(:customerId, '-', ''))", toParamMap(customer));
-                jdbcTemplate.update("UPDATE customers SET email = :email WHERE customer_id = UNHEX(REPLACE(:customerId, '-', ''))", toParamMap(customer));
-            }
-        });
-    }
+//    public void testTransaction(Customer customer) {
+//        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+//            @Override
+//            protected void doInTransactionWithoutResult(TransactionStatus status) {
+//                jdbcTemplate.update("UPDATE customers SET name = :name WHERE customer_id = UNHEX(REPLACE(:customerId, '-', ''))", toParamMap(customer));
+//                jdbcTemplate.update("UPDATE customers SET email = :email WHERE customer_id = UNHEX(REPLACE(:customerId, '-', ''))", toParamMap(customer));
+//            }
+//        });
+//    }
 
     static UUID toUUID(byte[] bytes) { // 4버전의 UUID로 형변환 하기 위해
         var byteBuffer = ByteBuffer.wrap(bytes);
