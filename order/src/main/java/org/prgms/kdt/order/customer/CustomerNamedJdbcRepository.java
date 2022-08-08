@@ -3,6 +3,7 @@ package org.prgms.kdt.order.customer;
 import org.prgms.kdt.order.JdbcCustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -13,6 +14,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @Repository
+@Primary
 public class CustomerNamedJdbcRepository implements CustomerRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcCustomerRepository.class);

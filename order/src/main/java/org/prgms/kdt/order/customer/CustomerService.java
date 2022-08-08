@@ -6,4 +6,5 @@ public interface CustomerService {
 
     void createCustomers(List<Customer> customers);
 
+    List<Customer> getAllCustomers();
 }
