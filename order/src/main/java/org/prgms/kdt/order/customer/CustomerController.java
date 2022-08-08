@@ -1,8 +1,7 @@
 package org.prgms.kdt.order.customer;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
@@ -17,10 +16,10 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @RequestMapping(value = "/customers", method = RequestMethod.GET)
+    @GetMapping(value = "/customers")
     public ModelAndView findCustomers() {
         var allCustomers = customerService.getAllCustomers();
-        return new ModelAndView("customers",
+        return new ModelAndView("views/customers",
                 Map.of("serverTime", LocalDateTime.now(),
                         "customers", allCustomers));
     }
