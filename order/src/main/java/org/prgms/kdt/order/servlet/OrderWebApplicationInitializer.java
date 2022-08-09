@@ -17,6 +17,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.cbor.MappingJackson2CborHttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -99,7 +100,7 @@ public class OrderWebApplicationInitializer implements WebApplicationInitializer
             var javaTimeModule = new JavaTimeModule();
             javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ISO_DATE_TIME));
             var modules = Jackson2ObjectMapperBuilder.json().modules(javaTimeModule);
-            converters.add(0, new MappingJackson2CborHttpMessageConverter(modules.build()));
+            converters.add(0, new MappingJackson2HttpMessageConverter(modules.build()));
         }
     }
 
