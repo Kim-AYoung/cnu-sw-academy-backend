@@ -2,11 +2,10 @@ package org.prgms.kdt.order.customer;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -18,8 +17,14 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+    @GetMapping("/api/v1/customers")
+    @ResponseBody
+    public List<Customer> findCustomers() {
+        return customerService.getAllCustomers();
+    }
+
     @GetMapping("/customers")
-    public String findCustomers(Model model) {
+    public String viewCustomersPage(Model model) {
         var allCustomers = customerService.getAllCustomers();
         model.addAttribute("serverTime", LocalDateTime.now());
         model.addAttribute("customers", allCustomers);
