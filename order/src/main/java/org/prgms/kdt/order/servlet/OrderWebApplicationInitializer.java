@@ -1,6 +1,7 @@
 package org.prgms.kdt.order.servlet;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.prgms.kdt.order.customer.CustomerController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -10,12 +11,14 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -23,7 +26,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.EncodedResourceResolver;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
@@ -38,9 +40,11 @@ public class OrderWebApplicationInitializer implements WebApplicationInitializer
 
     @Configuration
     @EnableWebMvc
-    @ComponentScan(basePackages = "org.prgms.kdt.order.customer")
-    @EnableTransactionManagement
-    static class AppConfig implements WebMvcConfigurer, ApplicationContextAware {
+    @ComponentScan(basePackages = "org.prgms.kdt.order.customer",
+        includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = CustomerController.class),
+        useDefaultFilters = false
+    )
+    static class ServletConfig implements WebMvcConfigurer, ApplicationContextAware {
 
         ApplicationContext applicationContext;
 
@@ -69,6 +73,19 @@ public class OrderWebApplicationInitializer implements WebApplicationInitializer
                     .addResolver(new EncodedResourceResolver());
         }
 
+        @Override
+        public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+            this.applicationContext = applicationContext;
+        }
+
+    }
+
+    @Configuration
+    @ComponentScan(basePackages = "org.prgms.kdt.order.customer",
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = CustomerController.class)
+    )
+    @EnableTransactionManagement
+    static class RootConfig {
         @Bean
         public DataSource dataSource() {
             var dataSource = DataSourceBuilder.create()
@@ -95,22 +112,21 @@ public class OrderWebApplicationInitializer implements WebApplicationInitializer
             return new DataSourceTransactionManager(dataSource);
         }
 
-        @Override
-        public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-            this.applicationContext = applicationContext;
-        }
     }
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         logger.info("Starting Server...");
+        var rootApplicationContext = new AnnotationConfigWebApplicationContext();
+        rootApplicationContext.register(RootConfig.class);
+        var contextLoaderListener = new ContextLoaderListener(rootApplicationContext);
+        servletContext.addListener(contextLoaderListener);
 
         var applicationContext = new AnnotationConfigWebApplicationContext();
-        applicationContext.register(AppConfig.class);
-
+        applicationContext.register(ServletConfig.class);
         var dispatcherServlet = new DispatcherServlet(applicationContext);
         var servletRegistration = servletContext.addServlet("test", dispatcherServlet);
         servletRegistration.addMapping("/");
-        servletRegistration.setLoadOnStartup(1);
+        servletRegistration.setLoadOnStartup(-1);
     }
 }
