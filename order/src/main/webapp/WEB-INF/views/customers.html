@@ -11,8 +11,11 @@
 </head>
 <body class="container-fluid">
     <h1>Order Spring App</h1>
-    <img th:src="@{/resources/profile.png}" class="img-fluid">
+    <img th:src="@{/resources/profile.png}" class="img-fluid" width="200" height="200">
     <p th:text="'The time on the server is' + ${serverTime}">----</p>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a th:href="@{/customers/new}" class="btn btn-primary me-md-2" type="button">Create Customer</a>
+    </div>
     <table class="table table-striped table-hover">
         <thead>
             <tr>
