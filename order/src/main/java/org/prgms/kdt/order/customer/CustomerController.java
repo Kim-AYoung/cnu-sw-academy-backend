@@ -26,6 +26,17 @@ public class CustomerController {
         return "views/customers";
     }
 
+    @GetMapping("/customers/{customerId}")
+    public String findCustomer(@PathVariable("customerId") UUID customerId, Model model) {
+        var customer = customerService.getCustomer(customerId);
+        if(customer.isPresent()) {
+            model.addAttribute("customer", customer.get());
+            return "views/customer-details";
+        } else {
+            return "views/404";
+        }
+    }
+
     @GetMapping("/customers/new")
     public String viewNewCustomerPage() {
         return "views/new-customer";
