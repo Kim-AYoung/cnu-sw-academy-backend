@@ -3,7 +3,7 @@ package org.prgms.kdt.order.servlet;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.zaxxer.hikari.HikariDataSource;
-import org.prgms.kdt.order.customer.CustomerController;
+import org.prgms.kdt.order.customer.controller.CustomerController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -15,7 +15,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.cbor.MappingJackson2CborHttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
@@ -66,6 +65,7 @@ public class OrderWebApplicationInitializer implements WebApplicationInitializer
             springResourceTemplateResolver.setSuffix(".html");
             var springTemplateEngine = new SpringTemplateEngine();
             springTemplateEngine.setTemplateResolver(springResourceTemplateResolver);
+
             var thymeleafViewResolver = new ThymeleafViewResolver();
             thymeleafViewResolver.setTemplateEngine(springTemplateEngine);
             thymeleafViewResolver.setOrder(1);

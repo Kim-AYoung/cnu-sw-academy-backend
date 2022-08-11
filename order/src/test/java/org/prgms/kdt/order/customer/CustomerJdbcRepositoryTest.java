@@ -6,6 +6,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.*;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
+import org.prgms.kdt.order.customer.model.Customer;
+import org.prgms.kdt.order.customer.repository.CustomerJdbcRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;

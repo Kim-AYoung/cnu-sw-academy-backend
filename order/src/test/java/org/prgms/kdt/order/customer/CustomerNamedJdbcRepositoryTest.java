@@ -4,6 +4,8 @@ import com.wix.mysql.EmbeddedMysql;
 import com.wix.mysql.ScriptResolver;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.*;
+import org.prgms.kdt.order.customer.model.Customer;
+import org.prgms.kdt.order.customer.repository.CustomerNamedJdbcRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

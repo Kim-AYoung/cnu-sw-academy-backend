@@ -1,5 +1,8 @@
-package org.prgms.kdt.order.customer;
+package org.prgms.kdt.order.customer.service;
 
+import org.prgms.kdt.order.customer.model.Customer;
+import org.prgms.kdt.order.customer.repository.CustomerRepository;
+import org.prgms.kdt.order.customer.service.CustomerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

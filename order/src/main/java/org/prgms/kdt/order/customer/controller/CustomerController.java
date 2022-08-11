@@ -1,5 +1,7 @@
-package org.prgms.kdt.order.customer;
+package org.prgms.kdt.order.customer.controller;
 
+import org.prgms.kdt.order.customer.model.Customer;
+import org.prgms.kdt.order.customer.service.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
