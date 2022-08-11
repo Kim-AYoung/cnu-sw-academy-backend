@@ -1,3 +1,7 @@
+logging:
+  level:
+    org:
+      springframework: info
 kdt:
   version: "v1.0-local"
   minimum-order-amount: 1
