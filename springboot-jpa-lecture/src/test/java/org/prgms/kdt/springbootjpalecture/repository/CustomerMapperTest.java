@@ -23,7 +23,7 @@ public class CustomerMapperTest {
     CustomerMapper customerMapper;
 
     @Test
-    void save() {
+    void save_test() {
         jdbcTemplate.update(DROP_TABLE_SQL);
         jdbcTemplate.update(CREATE_TABLE_SQL);
 
