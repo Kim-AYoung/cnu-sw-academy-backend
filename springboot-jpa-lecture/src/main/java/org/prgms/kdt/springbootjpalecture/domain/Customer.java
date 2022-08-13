@@ -1,4 +1,4 @@
-package org.prgms.kdt.springbootjpalecture.repository.domain;
+package org.prgms.kdt.springbootjpalecture.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -6,13 +6,12 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "customers")
-public class CustomerEntity {
+public class Customer {
 
     @Id
     private long id;
     private String firstName;
     private String lastName;
-    private int age;
 
     public long getId() {
         return id;
@@ -37,12 +36,5 @@ public class CustomerEntity {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
 }
+
