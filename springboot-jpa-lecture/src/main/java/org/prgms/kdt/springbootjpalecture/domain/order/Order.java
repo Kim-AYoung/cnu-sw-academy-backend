@@ -24,6 +24,7 @@ public class Order {
     @Lob
     private String memo;
 
-    // member fk
-    private Long memberId;
+    @ManyToOne
+    @JoinColumn(name = "member_id", referencedColumnName = "id")
+    private Member member;
 }
