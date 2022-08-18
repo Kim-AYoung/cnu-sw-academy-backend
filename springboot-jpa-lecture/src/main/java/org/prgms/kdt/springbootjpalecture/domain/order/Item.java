@@ -9,7 +9,8 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "DTYPE")
 public abstract class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
