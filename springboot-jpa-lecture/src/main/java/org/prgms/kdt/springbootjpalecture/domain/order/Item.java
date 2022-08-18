@@ -6,10 +6,11 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
-public class Item {
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
