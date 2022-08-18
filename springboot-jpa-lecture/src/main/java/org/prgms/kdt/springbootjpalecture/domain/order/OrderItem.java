@@ -9,7 +9,7 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-public class OrderItem {
+public class OrderItem extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

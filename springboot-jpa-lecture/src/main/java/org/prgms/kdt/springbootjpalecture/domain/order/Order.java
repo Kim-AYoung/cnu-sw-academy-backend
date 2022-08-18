@@ -12,7 +12,7 @@ import java.util.Objects;
 @Table(name = "orders")
 @Getter
 @Setter
-public class Order {
+public class Order extends BaseTimeEntity{
     @Id
     @Column(name = "id")
     private String uuid;
