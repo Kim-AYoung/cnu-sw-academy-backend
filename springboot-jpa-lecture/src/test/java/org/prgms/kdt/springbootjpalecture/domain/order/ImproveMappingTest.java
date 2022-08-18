@@ -66,8 +66,7 @@ public class ImproveMappingTest {
         transaction.begin();
 
         Parent parent = new Parent();
-        parent.setId1("id1");
-        parent.setId2("id2");
+        parent.setId(new ParentId("id1", "id2"));
         entityManager.persist(parent);
 
         transaction.commit();
@@ -75,6 +74,6 @@ public class ImproveMappingTest {
         entityManager.clear();
 
         Parent parentEntity = entityManager.find(Parent.class, new ParentId("id1", "id2"));
-        log.info("parent id1 : {}, id2 : {}", parentEntity.getId1(), parentEntity.getId2());
+        log.info("parent id1 : {}, id2 : {}", parentEntity.getId().getId1(), parentEntity.getId().getId2());
     }
 }
