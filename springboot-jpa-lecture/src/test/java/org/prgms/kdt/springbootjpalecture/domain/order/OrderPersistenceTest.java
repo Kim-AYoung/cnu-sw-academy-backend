@@ -1,6 +1,7 @@
 package org.prgms.kdt.springbootjpalecture.domain.order;
 
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.prgms.kdt.springbootjpalecture.domain.order.OrderStatus.OPENED;

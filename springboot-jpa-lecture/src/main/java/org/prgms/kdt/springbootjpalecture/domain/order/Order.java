@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "orders")
@@ -27,4 +28,10 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
+
+    public void setMember(Member member) {
+        if(Objects.nonNull(this.member)) member.getOrders().remove(this);
+        this.member = member;
+        member.getOrders().add(this);
+    }
 }
