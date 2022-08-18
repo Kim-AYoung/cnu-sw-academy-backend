@@ -97,5 +97,13 @@ public class OrderPersistenceTest {
         entityManager.persist(order);
 
         transaction.commit();
+
+        entityManager.clear();
+
+        Order orderEntity = entityManager.find(Order.class, order.getUuid());
+        // 객체 그래프 탐색
+        log.info("orderEntity.getMember().getNickName() : {}", orderEntity.getMember().getNickName());
+        log.info("orderEntity.getMember().getOrders().size() : {}", orderEntity.getMember().getOrders().size());
+        log.info("order.getMember().getOrders().size() : {}", order.getMember().getOrders().size());
     }
 }
