@@ -78,4 +78,29 @@ public class ProxyTest {
 
         transaction.commit(); // flush
     }
+
+    @Test
+    void orphan_test() {
+        EntityManager entityManager = emf.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        Order order = entityManager.find(Order.class, uuid);
+
+        transaction.begin();
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setQuantity(10);
+        orderItem.setPrice(1000);
+
+        order.addOrderItem(orderItem);
+
+        transaction.commit();
+
+        entityManager.clear();
+
+        Order order2 = entityManager.find(Order.class, uuid);
+
+        transaction.begin();
+        order2.getOrderItems().remove(0); // 고아 상태
+        transaction.commit();
+    }
 }
