@@ -61,4 +61,21 @@ public class ProxyTest {
         String nickname = member.getNickName();
         log.info("MEMBER USE BEFORE IS-LOADED : {}", emf.getPersistenceUnitUtil().isLoaded(member)); // Eager, Lazy -> member : Entity 객체
     }
+
+    @Test
+    void move_persist() {
+        EntityManager entityManager = emf.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        Order order = entityManager.find(Order.class, uuid); // 영속 상태
+
+        transaction.begin();
+
+        OrderItem orderItem = new OrderItem(); // 준영속 상태
+        orderItem.setQuantity(10);
+        orderItem.setPrice(1000);
+
+        order.addOrderItem(orderItem); // OrderItem : 준영속 상태 -> 영속 상태 (영속성 전이)
+
+        transaction.commit(); // flush
+    }
 }
