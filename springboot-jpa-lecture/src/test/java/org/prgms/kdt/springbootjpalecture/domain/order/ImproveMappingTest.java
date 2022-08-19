@@ -51,7 +51,7 @@ public class ImproveMappingTest {
         order.setOrderStatus(OPENED);
 
         order.setCreatedBy("kimayoung");
-        order.setCratedAt(LocalDateTime.now());
+        order.setCreatedAt(LocalDateTime.now());
 
         entityManager.persist(order);
 

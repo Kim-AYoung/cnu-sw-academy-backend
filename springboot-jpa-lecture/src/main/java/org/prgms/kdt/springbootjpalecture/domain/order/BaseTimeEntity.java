@@ -15,5 +15,5 @@ public class BaseTimeEntity {
     private String createdBy;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP")
-    private LocalDateTime cratedAt;
+    private LocalDateTime createdAt;
 }
