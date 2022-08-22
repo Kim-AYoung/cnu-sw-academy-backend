@@ -1,6 +1,5 @@
 package org.prgms.kdt.springbootjpalecture.order.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,9 +13,11 @@ import org.prgms.kdt.springbootjpalecture.order.dto.OrderDto;
 import org.prgms.kdt.springbootjpalecture.order.dto.OrderItemDto;
 import org.prgms.kdt.springbootjpalecture.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -24,12 +25,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureRestDocs
 @AutoConfigureMockMvc
 @SpringBootTest
 class OrderControllerTest {
@@ -48,7 +50,7 @@ class OrderControllerTest {
 
     String uuid = UUID.randomUUID().toString();
 
-    @BeforeEach
+//    @BeforeEach
     void setUp() {
         OrderDto orderDto = OrderDto.builder()
                 .uuid(uuid)
@@ -124,11 +126,38 @@ class OrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderDto)))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("order-save",
+                        requestFields(
+                                fieldWithPath("uuid").type(JsonFieldType.STRING).description("uuid"),
+                                fieldWithPath("orderDatetime").type(JsonFieldType.STRING).description("orderDatetime"),
+                                fieldWithPath("orderStatus").type(JsonFieldType.STRING).description("orderStatus"),
+                                fieldWithPath("memo").type(JsonFieldType.STRING).description("memo"),
+                                fieldWithPath("memberDto").type(JsonFieldType.OBJECT).description("memberDto"),
+                                fieldWithPath("memberDto.id").type(JsonFieldType.NULL).description("memberDto.id"),
+                                fieldWithPath("memberDto.name").type(JsonFieldType.STRING).description("memberDto.name"),
+                                fieldWithPath("memberDto.nickName").type(JsonFieldType.STRING).description("memberDto.nickName"),
+                                fieldWithPath("memberDto.age").type(JsonFieldType.NUMBER).description("memberDto.age"),
+                                fieldWithPath("memberDto.address").type(JsonFieldType.STRING).description("memberDto.address"),
+                                fieldWithPath("memberDto.description").type(JsonFieldType.STRING).description("memberDto.desc"),
+                                fieldWithPath("orderItemDtos[]").type(JsonFieldType.ARRAY).description("orderItemDtos"),
+                                fieldWithPath("orderItemDtos[].id").type(JsonFieldType.NULL).description("orderItemDtos.id"),
+                                fieldWithPath("orderItemDtos[].price").type(JsonFieldType.NUMBER).description("orderItemDtos.price"),
+                                fieldWithPath("orderItemDtos[].quantity").type(JsonFieldType.NUMBER).description("orderItemDtos.quantity"),
+                                fieldWithPath("orderItemDtos[].itemDtos[]").type(JsonFieldType.ARRAY).description("orderItemDtos.itemDtos"),
+                                fieldWithPath("orderItemDtos[].itemDtos[].price").type(JsonFieldType.NUMBER).description("orderItemDtos.itemDtos.price"),
+                                fieldWithPath("orderItemDtos[].itemDtos[].stockQuantity").type(JsonFieldType.NUMBER).description("orderItemDtos.itemDtos.stockQuantity"),
+                                fieldWithPath("orderItemDtos[].itemDtos[].type").type(JsonFieldType.STRING).description("orderItemDtos.itemDtos.type"),
+                                fieldWithPath("orderItemDtos[].itemDtos[].chef").type(JsonFieldType.STRING).description("orderItemDtos.itemDtos.chef")
+                        ),
+                        responseFields(
+                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("status code"),
+                                fieldWithPath("data").type(JsonFieldType.STRING).description("data"),
+                                fieldWithPath("serverDatetime").type(JsonFieldType.STRING).description("response time")
+                        )));
     }
 
     @Test
-    void getOne() throws Exception {
+    void getOneCallTest() throws Exception {
         mockMvc.perform(get("/orders/{uuid}", uuid)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -136,7 +165,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void getAll() throws Exception {
+    void getAllCallTest() throws Exception {
         mockMvc.perform(get("/orders")
                         .param("page", String.valueOf(0))
                         .param("size", String.valueOf(10))
