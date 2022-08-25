@@ -47,6 +47,10 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
                 .and()
             .requiresChannel()
                 .anyRequest().requiresSecure()
+                .and()
+            .anonymous()
+                .principal("thisIsAnonymousUser")
+                .authorities("ROLE_ANONYMOUS", "ROLE_UNKNOWN")
         ;
     }
 }
