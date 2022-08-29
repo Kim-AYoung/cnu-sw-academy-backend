@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -47,25 +48,30 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/")
                 .permitAll()
                 .and()
+            .rememberMe()
+                .rememberMeParameter("remember-me")
+                .tokenValiditySeconds(300)
+                .and()
             .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .and()
-            .rememberMe()
-                .rememberMeParameter("remember-me")
-                .tokenValiditySeconds(300)
+            .sessionManagement()
+                .sessionFixation().changeSessionId()
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .invalidSessionUrl("/")
+                .maximumSessions(1)
+                    .maxSessionsPreventsLogin(false)
+                    .and()
                 .and()
             .requiresChannel()
                 .anyRequest().requiresSecure()
                 .and()
-            .anonymous()
-                .principal("thisIsAnonymousUser")
-                .authorities("ROLE_ANONYMOUS", "ROLE_UNKNOWN")
-                .and()
             .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler())
+                .and()
         ;
     }
 
