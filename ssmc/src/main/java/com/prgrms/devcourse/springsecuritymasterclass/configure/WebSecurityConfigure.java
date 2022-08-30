@@ -69,6 +69,8 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/")
                 .permitAll()
                 .and()
+            .httpBasic()
+                .and()
             .rememberMe()
                 .rememberMeParameter("remember-me")
                 .tokenValiditySeconds(300)
